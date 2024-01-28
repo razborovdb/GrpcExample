@@ -1,0 +1,60 @@
+plugins {
+    id "com.google.protobuf" version "0.9.4"
+    id 'java'
+}
+
+group 'com.gitlab.techschool'
+version '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    // https://mvnrepository.com/artifact/com.google.protobuf/protobuf-java
+    implementation group: 'com.google.protobuf', name: 'protobuf-java', version: '3.25.2'
+    // https://mvnrepository.com/artifact/io.grpc/grpc-all
+    implementation group: 'io.grpc', name: 'grpc-all', version: '1.61.0'
+    // https://mvnrepository.com/artifact/javax.annotation/javax.annotation-api
+    implementation group: 'javax.annotation', name: 'javax.annotation-api', version: '1.3.2'
+
+    // https://mvnrepository.com/artifact/io.grpc/grpc-services
+    runtimeOnly group: 'io.grpc', name: 'grpc-services', version: '1.61.0'
+
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.1'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.1'
+}
+
+sourceSets {
+    main {
+        java {
+            srcDirs 'build/generated/source/proto/main/grpc'
+            srcDirs 'build/generated/source/proto/main/java'
+        }
+    }
+}
+
+test {
+    useJUnitPlatform()
+}
+
+protobuf {
+    // Configure the protoc executable
+    protoc {
+        // Download from repositories
+        artifact = 'com.google.protobuf:protoc:3.25.2'
+    }
+
+    // Locate the codegen plugins
+    plugins {
+        grpc {
+            artifact = 'io.grpc:protoc-gen-grpc-java:1.61.0'
+        }
+    }
+
+    generateProtoTasks {
+        all()*.plugins {
+            grpc {}
+        }
+    }
+}
